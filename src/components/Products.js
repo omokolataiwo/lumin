@@ -1,8 +1,9 @@
-import React, { Component } from 'react';
+import React from 'react';
 import gql from 'graphql-tag';
-import { Query } from 'react-apollo';
+import { useQuery } from '@apollo/react-hooks';
+import { Grid, Button } from '@material-ui/core';
 
-const PRODUCTS_QUERY = gql`
+export const PRODUCT_QUERY = gql`
   query ProductsQuery {
     products{
     id
@@ -12,24 +13,23 @@ const PRODUCTS_QUERY = gql`
 }
 `;
 
+const Products = ({ onToggleDrawer }) => {
+  const { loading, error, data } = useQuery(PRODUCT_QUERY);
+  if (loading) return <p>Loading...</p>;
+  if (error) return <p>Something went wrong</p>;
 
-export default class Products extends Component {
-  render() {
-    return (
-      <div>
-        Products
-        <Query query={PRODUCTS_QUERY}>
-          {
-            ({ loading, error, data }) => {
-              if (loading) return 'Loading';
-              if (error) console.log(error);
+  const { products } = data;
 
-              console.log(data);
-              return <h6>Test</h6>
-            }
-          }
-        </Query>
-      </div>
-    )
-  }
+  return (
+    <Grid container item xs={12}>
+      {products.map(product => (
+        <Grid item xs={6} md={4} key={product.id}>
+          <p>Product ID</p>
+          <Button onClick={onToggleDrawer(true)}>Open</Button>
+        </Grid>
+      ))}
+    </Grid>
+  );
 }
+
+export default Products;
