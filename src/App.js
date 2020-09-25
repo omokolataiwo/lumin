@@ -78,6 +78,12 @@ function App() {
     setState({ ...state, cart: { ...cart, [id]: product } });
   };
 
+  const handleCurrencyChanged = (selectedCurrency) => {
+    console.clear();
+    console.log('========================> ', selectedCurrency);
+    setState({ ...state, selectedCurrency });
+  };
+
   return (
     <MuiThemeProvider theme={theme}>
       <div className={classes.root}>
@@ -88,6 +94,7 @@ function App() {
             cart={state.cart}
             handleDecrement={handleDecrement}
             handleIncrement={handleIncrement} />
+            handleCurrencyChanged={handleCurrencyChanged}
         </Drawer>}
         <Grid container spacing={3}>
           <Grid item xs={12}>
@@ -98,7 +105,7 @@ function App() {
               <Header />
             </Grid>
           </Grid>
-          <Products onToggleDrawer={toggleDrawer} onAddToCart={addToCart} products={products} error={error} loading={loading} selectCurrency={state.selectedCurrency} />
+          <Products onToggleDrawer={toggleDrawer} onAddToCart={addToCart} products={products} error={error} loading={loading} selectedCurrency={state.selectedCurrency} />
         </Grid>
       </div>
     </MuiThemeProvider>

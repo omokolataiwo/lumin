@@ -58,7 +58,7 @@ const useStyles = makeStyles(() => ({
   },
 }));
 
-const DrawerProductContent = ({ handleDecrement, handleIncrement, cart, currency, selectedCurrency }) => {
+const DrawerProductContent = ({ handleDecrement, handleIncrement, cart, currency, selectedCurrency, handleCurrencyChanged }) => {
   const classes = useStyles();
   return (
     <div
@@ -68,7 +68,7 @@ const DrawerProductContent = ({ handleDecrement, handleIncrement, cart, currency
       <div className={classes.drawerHeader}>
         <div className={classes.nav}>
           <div className={classes.backBtn}><NavigateBeforeIcon /></div>
-          <SelectInput items={currency} label={selectedCurrency} value={selectedCurrency} />
+          <SelectInput items={currency} label={selectedCurrency} value={selectedCurrency} handleChange={handleCurrencyChanged} />
         </div>
         <div className={classes.headerLabel}>Your Cart</div>
       </div>
