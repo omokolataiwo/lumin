@@ -1,18 +1,18 @@
 import React from 'react';
-import ApolloClient from 'apollo-boost';
-import { ApolloProvider } from '@apollo/react-hooks';
 import { makeStyles } from '@material-ui/core/styles';
 import { createMuiTheme, MuiThemeProvider } from '@material-ui/core/styles';
 import { Grid } from '@material-ui/core';
+import { useQuery } from '@apollo/react-hooks';
+import gql from 'graphql-tag';
 
 import Products from './components/Products';
 import Nav from './components/Nav';
 import Header from './components/Header';
 import Drawer from './components/Drawer';
+import DrawerProductContent from './components/DrawerProductContent';
 
 const theme = createMuiTheme({
   palette: {
-    primary: { main: '#ff0000' },
   },
 })
 
@@ -21,53 +21,87 @@ const useStyles = makeStyles(() => {
     root: {
       flexGrow: 1,
     },
-    list: {
-      width: 250,
-    },
-    fullList: {
-      width: 'auto',
-    },
   }
 });
 
-const client = new ApolloClient({
-  uri: 'https://pangaea-interviews.now.sh/api/graphql'
-});
+export const PRODUCT_QUERY = gql`
+  query ProductsQuery ($currency: Currency) {
+    products{
+    id
+    title
+    image_url
+    price(currency: $currency)
+  },
+  currency
+}
+`;
 
 function App() {
   const classes = useStyles();
   const [state, setState] = React.useState({
     drawer: false,
+    cart: {},
+    selectedCurrency: 'USD'
   });
 
-  const toggleDrawer = (open) => (event) => {
-    if (event.type === 'keydown' && (event.key === 'Tab' || event.key === 'Shift')) {
-      return;
-    }
+  const { loading, error, data } = useQuery(PRODUCT_QUERY, { variables: { currency: state.selectedCurrency } });
 
+  const { products, currency } = data || {};
+
+  const toggleDrawer = (open) => (event) => {
     setState({ ...state, drawer: open });
   };
 
+  const addToCart = ({ id, ...restProduct }, evt) => {
+    const { cart } = state;
+    const product = cart[id] || { ...restProduct, qty: 0 };
+    product.qty += 1;
+
+    setState({ ...state, drawer: true, cart: { ...cart, [id]: product } });
+  };
+
+  const handleIncrement = (id) => {
+    const { cart } = state;
+    const product = cart[id];
+    product.qty += 1;
+
+    setState({ ...state, cart: { ...cart, [id]: product } });
+  };
+
+  const handleDecrement = (id) => {
+    const { cart } = state;
+    const product = cart[id];
+
+    if (product.qty === 0) return;
+
+    product.qty -= 1;
+    setState({ ...state, cart: { ...cart, [id]: product } });
+  };
 
   return (
-    <ApolloProvider client={client}>
-      <MuiThemeProvider theme={theme}>
-        <div className={classes.root}>
-          <Drawer open={state.drawer} onToggleDrawer={toggleDrawer} />
-          <Grid container spacing={3}>
-            <Grid item xs={12}>
-              <Nav />
-            </Grid>
-            <Grid container>
-              <Grid item xs={6}>
-                <Header />
-              </Grid>
-            </Grid>
-            <Products onToggleDrawer={toggleDrawer} />
+    <MuiThemeProvider theme={theme}>
+      <div className={classes.root}>
+        {currency && <Drawer open={state.drawer} onToggleDrawer={toggleDrawer}>
+          <DrawerProductContent
+            selectedCurrency={state.selectedCurrency}
+            currency={currency}
+            cart={state.cart}
+            handleDecrement={handleDecrement}
+            handleIncrement={handleIncrement} />
+        </Drawer>}
+        <Grid container spacing={3}>
+          <Grid item xs={12}>
+            <Nav />
           </Grid>
-        </div>
-      </MuiThemeProvider>
-    </ApolloProvider>
+          <Grid container>
+            <Grid item xs={6}>
+              <Header />
+            </Grid>
+          </Grid>
+          <Products onToggleDrawer={toggleDrawer} onAddToCart={addToCart} products={products} error={error} loading={loading} selectCurrency={state.selectedCurrency} />
+        </Grid>
+      </div>
+    </MuiThemeProvider>
   );
 }
 
