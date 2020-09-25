@@ -1,32 +1,52 @@
 import React from 'react';
-import gql from 'graphql-tag';
-import { useQuery } from '@apollo/react-hooks';
 import { Grid, Button } from '@material-ui/core';
+import { makeStyles } from '@material-ui/core/styles';
+import { CURRENCY_SYMBOL } from '../constants';
 
-export const PRODUCT_QUERY = gql`
-  query ProductsQuery {
-    products{
-    id
-    title
-    image_url
-  }
-}
-`;
+const useStyles = makeStyles({
+  products: {
+    display: 'flex',
+    flexWrap: 'wrap'
+  },
+  productCard: {
+    display: 'flex',
+    flexBasis: '28%',
+    padding: '2%',
+    flexDirection: 'column',
+    alignSelf: 'baseline',
+    textAlign: 'center'
+  },
+  pImageWrapper: {
+    '& img': {
+      maxWidth: '70%',
+      maxHeight: 150,
+    }
+  },
+  pInfo: {
+    marginTop: 'auto',
+  },
+});
 
-const Products = ({ onToggleDrawer }) => {
-  const { loading, error, data } = useQuery(PRODUCT_QUERY);
+
+const Products = ({ products, onAddToCart, error, loading, selectCurrency }) => {
+  const classes = useStyles();
+
   if (loading) return <p>Loading...</p>;
   if (error) return <p>Something went wrong</p>;
 
-  const { products } = data;
-
   return (
-    <Grid container item xs={12}>
+    <Grid className={classes.products}>
       {products.map(product => (
-        <Grid item xs={6} md={4} key={product.id}>
-          <p>Product ID</p>
-          <Button onClick={onToggleDrawer(true)}>Open</Button>
-        </Grid>
+        <div className={classes.productCard} key={product.id}>
+          <div className={classes.pImageWrapper}>
+            <img src={product.image_url} alt={product.title} />
+          </div>
+          <div className={classes.pInfo}>
+            <p>{product.title}</p>
+            <p>From {`${CURRENCY_SYMBOL[selectCurrency]}`} {product.price}</p>
+            <Button onClick={(evt) => onAddToCart(product, evt)}>Add to Cart</Button>
+          </div>
+        </div>
       ))}
     </Grid>
   );
