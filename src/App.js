@@ -10,6 +10,7 @@ import Nav from './components/Nav';
 import Header from './components/Header';
 import Drawer from './components/Drawer';
 import DrawerProductContent from './components/DrawerProductContent';
+import { IS_EMPTY, ZERO_ITEM } from './constants';
 
 const theme = createMuiTheme({
   palette: {
@@ -44,13 +45,54 @@ function App() {
     selectedCurrency: 'USD'
   });
 
-  const { loading, error, data } = useQuery(PRODUCT_QUERY, { variables: { currency: state.selectedCurrency } });
+  const { loading, error, data } = useQuery(PRODUCT_QUERY, {
+    variables: { currency: state.selectedCurrency },
+    onCompleted: ({ products }) => {
+      const { cart } = state;
+
+      Object.keys(cart).forEach(productId => {
+        const updatedProduct = products.find(product => parseInt(product.id) === parseInt(productId))
+
+        if (!updatedProduct) {
+          throw Error('Cart item missing in products.')
+        }
+        cart[productId]['price'] = updatedProduct.price
+      });
+
+      setState({ ...state, cart });
+    }
+  });
 
   const { products, currency } = data || {};
 
   const toggleDrawer = (open) => (event) => {
-    setState({ ...state, drawer: open });
+    let { cart } = state;
+
+    if (!open) {
+      return setState({ ...state, drawer: open, cart: removeZeroItems(cart) });
+    }
+    return setState({ ...state, drawer: open });
   };
+
+  const handleRemoveFromCart = (productId) => {
+    const { [productId]: removedProduct, ...cart } = state.cart;
+    let nState = { cart };
+
+    if (Object.keys(cart).length === IS_EMPTY) {
+      nState.drawer = false;
+    }
+    return setState({ ...state, ...nState });
+  }
+
+  const removeZeroItems = (cart) => {
+    return Object.entries(cart).reduce((accCart, [id, product]) => {
+      if (product.qty === ZERO_ITEM) {
+        const { [id]: emptyProduct, ...rest } = accCart;
+        return rest;
+      }
+      return accCart;
+    }, cart);
+  }
 
   const addToCart = ({ id, ...restProduct }, evt) => {
     const { cart } = state;
@@ -78,6 +120,11 @@ function App() {
     setState({ ...state, cart: { ...cart, [id]: product } });
   };
 
+  const handleCurrencyChanged = (evt) => {
+    const { target: { value: selectedCurrency } } = evt;
+    setState({ ...state, selectedCurrency });
+  };
+
   return (
     <MuiThemeProvider theme={theme}>
       <div className={classes.root}>
@@ -87,7 +134,11 @@ function App() {
             currency={currency}
             cart={state.cart}
             handleDecrement={handleDecrement}
-            handleIncrement={handleIncrement} />
+            handleIncrement={handleIncrement}
+            handleCurrencyChanged={handleCurrencyChanged}
+            handleCloseDrawer={toggleDrawer}
+            handleRemoveFromCart={handleRemoveFromCart}
+          />
         </Drawer>}
         <Grid container spacing={3}>
           <Grid item xs={12}>
@@ -98,7 +149,7 @@ function App() {
               <Header />
             </Grid>
           </Grid>
-          <Products onToggleDrawer={toggleDrawer} onAddToCart={addToCart} products={products} error={error} loading={loading} selectCurrency={state.selectedCurrency} />
+          <Products onToggleDrawer={toggleDrawer} onAddToCart={addToCart} products={products} error={error} loading={loading} selectedCurrency={state.selectedCurrency} />
         </Grid>
       </div>
     </MuiThemeProvider>

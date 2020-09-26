@@ -58,7 +58,7 @@ const useStyles = makeStyles(() => ({
   },
 }));
 
-const DrawerProductContent = ({ handleDecrement, handleIncrement, cart, currency, selectedCurrency }) => {
+const DrawerProductContent = ({ handleDecrement, handleIncrement, cart, currency, selectedCurrency, handleCurrencyChanged, handleCloseDrawer, handleRemoveFromCart }) => {
   const classes = useStyles();
   return (
     <div
@@ -67,8 +67,8 @@ const DrawerProductContent = ({ handleDecrement, handleIncrement, cart, currency
     >
       <div className={classes.drawerHeader}>
         <div className={classes.nav}>
-          <div className={classes.backBtn}><NavigateBeforeIcon /></div>
-          <SelectInput items={currency} label={selectedCurrency} value={selectedCurrency} />
+          <div className={classes.backBtn}><NavigateBeforeIcon onClick={handleCloseDrawer(false)} /></div>
+          <SelectInput items={currency} label={selectedCurrency} value={selectedCurrency} handleChange={handleCurrencyChanged} />
         </div>
         <div className={classes.headerLabel}>Your Cart</div>
       </div>
@@ -76,7 +76,7 @@ const DrawerProductContent = ({ handleDecrement, handleIncrement, cart, currency
       {Object.entries(cart).map(([id, product]) => {
         return (
           <div key={id} className={classes.productCard}>
-            <div className={classes.closeBtn}>X</div>
+            <div className={classes.closeBtn} onClick={() => handleRemoveFromCart(id)}>X</div>
             <div>{product.title}</div>
             <div className={classes.productImage}>
               <img src={product.image_url} alt={product.title} />
@@ -86,7 +86,7 @@ const DrawerProductContent = ({ handleDecrement, handleIncrement, cart, currency
                 <GroupButton handleDecrement={handleDecrement} handleIncrement={handleIncrement} id={id} count={product.qty} />
               </div>
               <div className={classes.productPrice}>
-                {CURRENCY_SYMBOL[selectedCurrency]} {product.price}
+                {CURRENCY_SYMBOL[selectedCurrency] || selectedCurrency} {product.price}
               </div>
             </div>
           </div>

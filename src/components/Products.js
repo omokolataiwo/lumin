@@ -28,7 +28,7 @@ const useStyles = makeStyles({
 });
 
 
-const Products = ({ products, onAddToCart, error, loading, selectCurrency }) => {
+const Products = ({ products, onAddToCart, error, loading, selectedCurrency }) => {
   const classes = useStyles();
 
   if (loading) return <p>Loading...</p>;
@@ -43,7 +43,7 @@ const Products = ({ products, onAddToCart, error, loading, selectCurrency }) => 
           </div>
           <div className={classes.pInfo}>
             <p>{product.title}</p>
-            <p>From {`${CURRENCY_SYMBOL[selectCurrency]}`} {product.price}</p>
+            <p>From {CURRENCY_SYMBOL[selectedCurrency] || selectedCurrency} {product.price}</p>
             <Button onClick={(evt) => onAddToCart(product, evt)}>Add to Cart</Button>
           </div>
         </div>
