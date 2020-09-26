@@ -43,7 +43,7 @@ const Products = ({ products, onAddToCart, error, loading, selectedCurrency }) =
           </div>
           <div className={classes.pInfo}>
             <p>{product.title}</p>
-            <p>From {`${CURRENCY_SYMBOL[selectedCurrency]}`} {product.price}</p>
+            <p>From {CURRENCY_SYMBOL[selectedCurrency] || selectedCurrency} {product.price}</p>
             <Button onClick={(evt) => onAddToCart(product, evt)}>Add to Cart</Button>
           </div>
         </div>
