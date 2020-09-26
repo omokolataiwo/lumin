@@ -95,7 +95,7 @@ const DrawerProductContent = ({ handleDecrement, handleIncrement, cart, currency
       <Divider />
       <div>
         <div>Subtotal</div>
-        <div>200</div>
+        <div>{Object.values(cart).reduce((subTotal, product) => subTotal + parseInt(product.price), 0)}</div>
       </div>
       <div>
         <Button>Make this a subscription (save 20%)</Button>
