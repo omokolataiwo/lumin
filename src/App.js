@@ -22,6 +22,10 @@ const useStyles = makeStyles(() => {
     root: {
       flexGrow: 1,
     },
+    cartDrawer: {
+      margin: '26px',
+      backgroundColor: '#f2f3f0',
+    }
   }
 });
 

@@ -1,7 +1,7 @@
 import React from 'react';
 import { Grid, Button } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
-import { CURRENCY_SYMBOL } from '../constants';
+import { currencyFormat } from '../constants';
 
 const useStyles = makeStyles({
   products: {
@@ -43,7 +43,7 @@ const Products = ({ products, onAddToCart, error, loading, selectedCurrency }) =
           </div>
           <div className={classes.pInfo}>
             <p>{product.title}</p>
-            <p>From {CURRENCY_SYMBOL[selectedCurrency] || selectedCurrency} {product.price}</p>
+            <p>From {currencyFormat(product.price, selectedCurrency)}</p>
             <Button onClick={(evt) => onAddToCart(product, evt)}>Add to Cart</Button>
           </div>
         </div>

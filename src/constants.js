@@ -1,5 +1,6 @@
 export const ZERO_ITEM = 0;
 export const IS_EMPTY = 0;
+
 export const CURRENCY_SYMBOL = {
   USD: '$',
   CAD: 'CA$',
@@ -121,3 +122,11 @@ export const CURRENCY_SYMBOL = {
   ZMK: 'ZK',
   ZWL: 'ZWL$'
 };
+
+export const currencyFormat = (amount, currency) => {
+  const currencySymbol = CURRENCY_SYMBOL[currency] || currency;
+  const formattedCurrency = Intl.NumberFormat(undefined,
+    { minimumFractionDigits: 2 }
+  ).format(amount);
+  return `${currencySymbol}${formattedCurrency}`
+}

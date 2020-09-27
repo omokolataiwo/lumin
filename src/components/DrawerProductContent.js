@@ -4,42 +4,47 @@ import { makeStyles } from '@material-ui/core/styles';
 
 import SelectInput from './SelectInput';
 import GroupButton from './GroupButton';
-import { Button, Divider } from '@material-ui/core';
+import { Divider } from '@material-ui/core';
 import NavigateBeforeIcon from '@material-ui/icons/NavigateBefore';
-import { CURRENCY_SYMBOL } from '../constants';
+import { currencyFormat } from '../constants';
+import FlatButton from './FlatButton';
 
 const useStyles = makeStyles(() => ({
-  drawerHeader: {
-    display: 'flex',
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    width: '100%',
-  },
   nav: {
-    flex: '30%',
-  },
-  backBtn: {
-    width: 25,
-    height: 25,
-    borderRadius: '50%',
-    border: '1px solid',
-  },
-  headerLabel: {
-    flex: '70%'
+    marginBottom: 12,
+    '& svg': {
+      border: '1px solid',
+      borderRadius: '50%'
+    },
+    '& span': {
+      position: 'relative',
+      top: '-6px',
+      marginLeft: '228px',
+    }
   },
   closeBtn: {
     display: 'flex',
     justifyContent: 'flex-end',
+    fontSize: '12px',
+    fontWeight: 600,
   },
   productCard: {
-    border: '1px solid'
+    backgroundColor: '#fff',
+    marginTop: '25px',
+    padding: '10px 15px',
+  },
+  productTitle: {
+    fontSize: 14,
   },
   productImage: {
     display: 'flex',
     justifyContent: 'flex-end',
+    margin: '15px 50px',
     '& img': {
       maxWidth: 50,
       maxHeight: 60,
+      minWidth: 50,
+      minaHeight: 60,
     }
   },
   productCardFooter: {
@@ -54,12 +59,36 @@ const useStyles = makeStyles(() => ({
   list: {
     width: 550,
     maxHeight: 1000,
-    overflow: 'scroll'
+    overflow: 'scroll',
+    padding: 20,
+    backgroundColor: '#f2f3f0',
+    height: '100%',
   },
+  divider: {
+    margin: '189px auto 20px auto',
+  },
+  subTotal: {
+    display: 'flex',
+    '& div:last-child': {
+      flexGrow: 1,
+      textAlign: 'end'
+    },
+    '& div:first-child': {
+      flexGrow: 1,
+    }
+  }
 }));
+
 
 const DrawerProductContent = ({ handleDecrement, handleIncrement, cart, currency, selectedCurrency, handleCurrencyChanged, handleCloseDrawer, handleRemoveFromCart }) => {
   const classes = useStyles();
+
+  const calcSubTotal = (cart) => {
+    return Object.values(cart).reduce((subTotal, product) => {
+      return subTotal + parseInt(product.price, 10) * product.qty;
+    }, 0);
+  }
+
   return (
     <div
       className={clsx(classes.list)}
@@ -67,17 +96,19 @@ const DrawerProductContent = ({ handleDecrement, handleIncrement, cart, currency
     >
       <div className={classes.drawerHeader}>
         <div className={classes.nav}>
-          <div className={classes.backBtn}><NavigateBeforeIcon onClick={handleCloseDrawer(false)} /></div>
+          <NavigateBeforeIcon onClick={handleCloseDrawer(false)} />
+          <span>Your Cart</span>
+        </div>
+        <div>
           <SelectInput items={currency} label={selectedCurrency} value={selectedCurrency} handleChange={handleCurrencyChanged} />
         </div>
-        <div className={classes.headerLabel}>Your Cart</div>
       </div>
 
       {Object.entries(cart).map(([id, product]) => {
         return (
           <div key={id} className={classes.productCard}>
             <div className={classes.closeBtn} onClick={() => handleRemoveFromCart(id)}>X</div>
-            <div>{product.title}</div>
+            <div className={classes.productTitle}>{product.title}</div>
             <div className={classes.productImage}>
               <img src={product.image_url} alt={product.title} />
             </div>
@@ -86,23 +117,20 @@ const DrawerProductContent = ({ handleDecrement, handleIncrement, cart, currency
                 <GroupButton handleDecrement={handleDecrement} handleIncrement={handleIncrement} id={id} count={product.qty} />
               </div>
               <div className={classes.productPrice}>
-                {CURRENCY_SYMBOL[selectedCurrency] || selectedCurrency} {product.price}
+                {currencyFormat(product.price, selectedCurrency)}
               </div>
             </div>
           </div>
         )
       })}
-      <Divider />
-      <div>
+      <Divider className={classes.divider} />
+      <div className={classes.subTotal}>
         <div>Subtotal</div>
-        <div>{Object.values(cart).reduce((subTotal, product) => subTotal + parseInt(product.price), 0)}</div>
+        <div>
+          {currencyFormat(calcSubTotal(cart), selectedCurrency)}</div>
       </div>
-      <div>
-        <Button>Make this a subscription (save 20%)</Button>
-      </div>
-      <div>
-        <Button>proceed to checkout</Button>
-      </div>
+      <FlatButton color="plain">MAKE THIS A SUBSCRIPTION (SAVE 20%)</FlatButton>
+      <FlatButton>PROCEED TO CHECKOUT</FlatButton>
     </div>
   );
 }
