@@ -22,6 +22,10 @@ const useStyles = makeStyles(() => {
     root: {
       flexGrow: 1,
     },
+    cartDrawer: {
+      margin: '26px',
+      backgroundColor: '#f2f3f0',
+    }
   }
 });
 
@@ -76,7 +80,7 @@ function App() {
 
   const handleRemoveFromCart = (productId) => {
     const { [productId]: removedProduct, ...cart } = state.cart;
-    let nState = { cart };
+    let nState = { ...state, cart };
 
     if (Object.keys(cart).length === IS_EMPTY) {
       nState.drawer = false;
@@ -113,11 +117,20 @@ function App() {
   const handleDecrement = (id) => {
     const { cart } = state;
     const product = cart[id];
-
-    if (product.qty === 0) return;
-
     product.qty -= 1;
-    setState({ ...state, cart: { ...cart, [id]: product } });
+
+    const nState = { ...state, cart: { ...cart, [id]: product } };
+
+    if (product.qty === 0) {
+      const { [id]: removedProduct, ...cart } = nState.cart;
+      nState.cart = cart;
+
+      if (Object.keys(cart).length === IS_EMPTY) {
+        nState.drawer = false;
+      }
+    }
+
+    setState({ ...state, ...nState });
   };
 
   const handleCurrencyChanged = (evt) => {
@@ -142,13 +155,9 @@ function App() {
         </Drawer>}
         <Grid container spacing={3}>
           <Grid item xs={12}>
-            <Nav />
+            <Nav hello="123" />
           </Grid>
-          <Grid container>
-            <Grid item xs={6}>
-              <Header />
-            </Grid>
-          </Grid>
+          <Header />
           <Products onToggleDrawer={toggleDrawer} onAddToCart={addToCart} products={products} error={error} loading={loading} selectedCurrency={state.selectedCurrency} />
         </Grid>
       </div>
