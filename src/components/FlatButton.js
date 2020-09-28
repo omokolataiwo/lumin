@@ -1,6 +1,7 @@
+import React from 'react';
+import propTypes from 'prop-types';
 import { Button, makeStyles } from '@material-ui/core';
 import clsx from 'clsx';
-import React from 'react';
 
 const useStyles = makeStyles({
   button: {
@@ -34,5 +35,11 @@ const FlatButton = ({ children, color, handleOnClick }) => {
       })}>{children}</Button>
   );
 };
+
+FlatButton.propType = {
+  handleOnClick: propTypes.func.isRequired,
+  children: propTypes.func.isRequired,
+  color: propTypes.string.isRequired,
+}
 
 export default FlatButton;

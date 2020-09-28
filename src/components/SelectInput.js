@@ -1,4 +1,5 @@
 import React from 'react';
+import propTypes from 'prop-types';
 import { FormControl, Select, MenuItem, InputBase } from '@material-ui/core';
 import { makeStyles, withStyles } from '@material-ui/core/styles';
 import { white } from '../colors';
@@ -46,5 +47,12 @@ const SelectInput = ({ handleChange, value, items, label }) => {
     </FormControl>
   )
 };
+
+SelectInput.propType = {
+  handleChange: propTypes.func.isRequired,
+  value: propTypes.string.isRequired,
+  items: propTypes.arrayOf(propTypes.string).isRequired,
+  label: propTypes.string.isRequired,
+}
 
 export default SelectInput;
