@@ -61,11 +61,15 @@ const useStyles = makeStyles(() => ({
   },
   list: {
     width: 550,
-    maxHeight: 1000,
-    overflow: 'scroll',
     padding: 20,
     backgroundColor: '#f2f3f0',
     height: '100%',
+    position: 'relative'
+  },
+  drawerFooter: {
+    position: 'absolute',
+    bottom: 0,
+    width: '93%'
   },
   divider: {
     margin: '189px auto 20px auto',
@@ -79,6 +83,10 @@ const useStyles = makeStyles(() => ({
     '& div:first-child': {
       flexGrow: 1,
     }
+  },
+  drawerContent: {
+    maxHeight: '70%',
+    overflow: 'scroll',
   }
 }));
 
@@ -106,34 +114,37 @@ const DrawerProductContent = ({ handleDecrement, handleIncrement, cart, currency
           <SelectInput items={currency} label={selectedCurrency} value={selectedCurrency} handleChange={handleCurrencyChanged} />
         </div>
       </div>
-
-      {Object.entries(cart).map(([id, product]) => {
-        return (
-          <div key={id} className={classes.productCard}>
-            <div className={classes.closeBtn} onClick={() => handleRemoveFromCart(id)}>X</div>
-            <div className={classes.productTitle}>{product.title}</div>
-            <div className={classes.productImage}>
-              <img src={product.image_url} alt={product.title} />
-            </div>
-            <div className={classes.productCardFooter}>
-              <div className={classes.qtyUpdater}>
-                <GroupButton handleDecrement={handleDecrement} handleIncrement={handleIncrement} id={id} count={product.qty} />
+      <div className={classes.drawerContent}>
+        {Object.entries(cart).map(([id, product]) => {
+          return (
+            <div key={id} className={classes.productCard}>
+              <div className={classes.closeBtn} onClick={() => handleRemoveFromCart(id)}>X</div>
+              <div className={classes.productTitle}>{product.title}</div>
+              <div className={classes.productImage}>
+                <img src={product.image_url} alt={product.title} />
               </div>
-              <div className={classes.productPrice}>
-                {currencyFormat(product.price, selectedCurrency)}
+              <div className={classes.productCardFooter}>
+                <div className={classes.qtyUpdater}>
+                  <GroupButton handleDecrement={handleDecrement} handleIncrement={handleIncrement} id={id} count={product.qty} />
+                </div>
+                <div className={classes.productPrice}>
+                  {currencyFormat(product.price, selectedCurrency)}
+                </div>
               </div>
             </div>
-          </div>
-        )
-      })}
-      <Divider className={classes.divider} />
-      <div className={classes.subTotal}>
-        <div>Subtotal</div>
-        <div>
-          {currencyFormat(calcSubTotal(cart), selectedCurrency)}</div>
+          )
+        })}
       </div>
-      <FlatButton handleOnClick={() => { }} color="plain">MAKE THIS A SUBSCRIPTION (SAVE 20%)</FlatButton>
-      <FlatButton handleOnClick={() => { }}>PROCEED TO CHECKOUT</FlatButton>
+      <div className={classes.drawerFooter}>
+        <Divider className={classes.divider} />
+        <div className={classes.subTotal}>
+          <div>Subtotal</div>
+          <div>
+            {currencyFormat(calcSubTotal(cart), selectedCurrency)}</div>
+        </div>
+        <FlatButton handleOnClick={() => { }} color="plain">MAKE THIS A SUBSCRIPTION (SAVE 20%)</FlatButton>
+        <FlatButton handleOnClick={() => { }}>PROCEED TO CHECKOUT</FlatButton>
+      </div>
     </div>
   );
 }
