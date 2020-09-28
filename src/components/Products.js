@@ -1,12 +1,14 @@
 import React from 'react';
-import { Grid, Button } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 import { currencyFormat } from '../constants';
+import FlatButton from './FlatButton';
 
 const useStyles = makeStyles({
-  products: {
+  container: {
     display: 'flex',
-    flexWrap: 'wrap'
+    flexWrap: 'wrap',
+    backgroundColor: '#e2e6e3',
+    paddingTop: 80,
   },
   productCard: {
     display: 'flex',
@@ -14,7 +16,10 @@ const useStyles = makeStyles({
     padding: '2%',
     flexDirection: 'column',
     alignSelf: 'baseline',
-    textAlign: 'center'
+    textAlign: 'center',
+    '@media (max-width:768px)': {
+      flexBasis: '38%',
+    }
   },
   pImageWrapper: {
     '& img': {
@@ -24,18 +29,25 @@ const useStyles = makeStyles({
   },
   pInfo: {
     marginTop: 'auto',
+    '& button': {
+      width: '40%',
+      display: 'inline',
+    }
   },
+  center: {
+    margin: 'auto'
+  }
 });
 
 
 const Products = ({ products, onAddToCart, error, loading, selectedCurrency }) => {
   const classes = useStyles();
 
-  if (loading) return <p>Loading...</p>;
-  if (error) return <p>Something went wrong</p>;
+  if (loading) return <p className={classes.center}>Loading...</p>;
+  if (error) return <p className={classes.center}>Something went wrong</p>;
 
   return (
-    <Grid className={classes.products}>
+    <div className={classes.container}>
       {products.map(product => (
         <div className={classes.productCard} key={product.id}>
           <div className={classes.pImageWrapper}>
@@ -44,11 +56,11 @@ const Products = ({ products, onAddToCart, error, loading, selectedCurrency }) =
           <div className={classes.pInfo}>
             <p>{product.title}</p>
             <p>From {currencyFormat(product.price, selectedCurrency)}</p>
-            <Button onClick={(evt) => onAddToCart(product, evt)}>Add to Cart</Button>
+            <FlatButton handleOnClick={(evt) => onAddToCart(product, evt)}>Add to Cart</FlatButton>
           </div>
         </div>
       ))}
-    </Grid>
+    </div>
   );
 }
 

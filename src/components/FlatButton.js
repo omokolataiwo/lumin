@@ -23,11 +23,12 @@ const useStyles = makeStyles({
     color: '#4b5547'
   },
 });
-const FlatButton = ({ children, color }) => {
+const FlatButton = ({ children, color, handleOnClick }) => {
   const classes = useStyles();
 
   return (
     <Button
+      onClick={handleOnClick}
       className={clsx(classes.button, {
         [classes.plainButton]: color === 'plain',
       })}>{children}</Button>

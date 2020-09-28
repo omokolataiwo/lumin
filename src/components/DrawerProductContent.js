@@ -129,8 +129,8 @@ const DrawerProductContent = ({ handleDecrement, handleIncrement, cart, currency
         <div>
           {currencyFormat(calcSubTotal(cart), selectedCurrency)}</div>
       </div>
-      <FlatButton color="plain">MAKE THIS A SUBSCRIPTION (SAVE 20%)</FlatButton>
-      <FlatButton>PROCEED TO CHECKOUT</FlatButton>
+      <FlatButton handleOnClick={() => { }} color="plain">MAKE THIS A SUBSCRIPTION (SAVE 20%)</FlatButton>
+      <FlatButton handleOnClick={() => { }}>PROCEED TO CHECKOUT</FlatButton>
     </div>
   );
 }
