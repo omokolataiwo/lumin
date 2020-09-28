@@ -1,6 +1,5 @@
 import React from 'react';
 import { makeStyles } from '@material-ui/core/styles';
-import { createMuiTheme, MuiThemeProvider } from '@material-ui/core/styles';
 import { Grid } from '@material-ui/core';
 import { useQuery } from '@apollo/react-hooks';
 import gql from 'graphql-tag';
@@ -11,11 +10,6 @@ import Header from './components/Header';
 import Drawer from './components/Drawer';
 import DrawerProductContent from './components/DrawerProductContent';
 import { IS_EMPTY, ZERO_ITEM } from './constants';
-
-const theme = createMuiTheme({
-  palette: {
-  },
-})
 
 const useStyles = makeStyles(() => {
   return {
@@ -129,7 +123,6 @@ function App() {
         nState.drawer = false;
       }
     }
-
     setState({ ...state, ...nState });
   };
 
@@ -139,7 +132,6 @@ function App() {
   };
 
   return (
-    <MuiThemeProvider theme={theme}>
       <div className={classes.root}>
         {currency && <Drawer open={state.drawer} onToggleDrawer={toggleDrawer}>
           <DrawerProductContent
@@ -155,13 +147,12 @@ function App() {
         </Drawer>}
         <Grid container spacing={3}>
           <Grid item xs={12}>
-            <Nav hello="123" />
+          <Nav />
           </Grid>
           <Header />
           <Products onToggleDrawer={toggleDrawer} onAddToCart={addToCart} products={products} error={error} loading={loading} selectedCurrency={state.selectedCurrency} />
         </Grid>
-      </div>
-    </MuiThemeProvider>
+    </div>
   );
 }
 

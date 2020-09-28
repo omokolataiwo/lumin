@@ -1,13 +1,15 @@
 import React from 'react';
+import propTypes from 'prop-types';
 import clsx from 'clsx';
 import { makeStyles } from '@material-ui/core/styles';
 
 import SelectInput from './SelectInput';
 import GroupButton from './GroupButton';
+import FlatButton from './FlatButton';
+
 import { Divider } from '@material-ui/core';
 import NavigateBeforeIcon from '@material-ui/icons/NavigateBefore';
 import { currencyFormat } from '../constants';
-import FlatButton from './FlatButton';
 
 const useStyles = makeStyles(() => ({
   nav: {
@@ -27,6 +29,7 @@ const useStyles = makeStyles(() => ({
     justifyContent: 'flex-end',
     fontSize: '12px',
     fontWeight: 600,
+    cursor: 'pointer'
   },
   productCard: {
     backgroundColor: '#fff',
@@ -135,4 +138,14 @@ const DrawerProductContent = ({ handleDecrement, handleIncrement, cart, currency
   );
 }
 
+DrawerProductContent.propType = {
+  selectedCurrency: propTypes.string.isRequired,
+  currency: propTypes.arrayOf(propTypes.string).isRequired,
+  cart: propTypes.shape({}).isRequired,
+  handleDecrement: propTypes.func.isRequired,
+  handleIncrement: propTypes.func.isRequired,
+  handleCurrencyChanged: propTypes.func.isRequired,
+  handleCloseDrawer: propTypes.func.isRequired,
+  handleRemoveFromCart: propTypes.func.isRequired,
+}
 export default DrawerProductContent;

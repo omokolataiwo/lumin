@@ -1,4 +1,5 @@
 import React from 'react';
+import propTypes from 'prop-types';
 import { makeStyles } from '@material-ui/core/styles';
 import { currencyFormat } from '../constants';
 import FlatButton from './FlatButton';
@@ -62,6 +63,14 @@ const Products = ({ products, onAddToCart, error, loading, selectedCurrency }) =
       ))}
     </div>
   );
+}
+
+Products.propType = {
+  onAddToCart: propTypes.func.isRequired,
+  selectedCurrency: propTypes.string.isRequired,
+  error: propTypes.string.isRequired,
+  products: propTypes.arrayOf(propTypes.shape({})).isRequired,
+  loading: propTypes.string.isRequired,
 }
 
 export default Products;

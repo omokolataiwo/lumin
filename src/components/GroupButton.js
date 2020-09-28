@@ -1,4 +1,5 @@
 import React from "react";
+import propTypes from 'prop-types';
 import Button from "@material-ui/core/Button";
 import ButtonGroup from "@material-ui/core/ButtonGroup";
 import { makeStyles } from '@material-ui/core/styles';
@@ -30,6 +31,13 @@ const GroupedButtons = ({ handleIncrement, handleDecrement, count, id }) => {
       </ButtonGroup>
     </div>
   );
+}
+
+GroupedButtons.propType = {
+  handleIncrement: propTypes.func.isRequired,
+  handleDecrement: propTypes.func.isRequired,
+  count: propTypes.string.isRequired,
+  id: propTypes.string.isRequired,
 }
 
 export default GroupedButtons;
